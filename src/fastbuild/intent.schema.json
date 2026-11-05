@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Supported enclosure design intent; all dimensions in mm",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "template", "manufacturing", "fixation", "layout_axis", "wall",
+    "base", "lid", "clearance", "gap", "standoff", "headroom",
+    "max_size", "openings", "interpreted_requirements", "unresolved_requirements"
+  ],
+  "properties": {
+    "template": {"const": "screw_lid_enclosure"},
+    "manufacturing": {"const": "fdm_prototype"},
+    "fixation": {"const": "M3_through_bolts_hex_pockets"},
+    "layout_axis": {"enum": ["x", "y"]},
+    "wall": {"type": "number", "minimum": 2, "maximum": 8},
+    "base": {"type": "number", "minimum": 5, "maximum": 15},
+    "lid": {"type": "number", "minimum": 2, "maximum": 8},
+    "clearance": {"type": "number", "minimum": 2, "maximum": 20},
+    "gap": {"type": "number", "minimum": 2, "maximum": 50},
+    "standoff": {"type": "number", "minimum": 5, "maximum": 25},
+    "headroom": {"type": "number", "minimum": 8, "maximum": 40},
+    "max_size": {
+      "description": "Maximum final XYZ dimensions including lid tabs and fasteners.",
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {"type": "number", "minimum": 20, "maximum": 1000}
+    },
+    "openings": {
+      "type": "array", "maxItems": 20,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["name", "face", "offset", "z", "width", "height", "count", "pitch"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
+          "face": {"enum": ["front", "back", "left", "right"]},
+          "offset": {"type": "number"},
+          "z": {"description": "World Z center, measured from enclosure bottom.", "type": "number", "minimum": 0},
+          "width": {"type": "number", "minimum": 1},
+          "height": {"type": "number", "minimum": 1},
+          "count": {"type": "integer", "minimum": 1, "maximum": 20},
+          "pitch": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "interpreted_requirements": {
+      "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}
+    },
+    "unresolved_requirements": {
+      "description": "All unsupported, missing, or ambiguous requirements; never silently omit them.",
+      "type": "array", "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

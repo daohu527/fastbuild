@@ -1,0 +1,53 @@
+"""Run inside FreeCAD with FASTBUILD_RESULT_DIR pointing at a build result."""
+
+import json
+import math
+import os
+from pathlib import Path
+
+import FreeCAD as App
+import Import
+
+root = Path(os.environ["FASTBUILD_RESULT_DIR"]).resolve()
+report_path = root / "freecad-validation.json"
+if report_path.exists():
+    raise RuntimeError(f"Refusing to overwrite {report_path}")
+expected = json.loads((root / "validation.json").read_text(encoding="utf-8"))
+if expected["status"] != "geometry_passed":
+    raise RuntimeError("The deterministic geometry checks have not passed")
+doc = App.newDocument("FastbuildCheck")
+Import.insert(str(root / "assembly.step"), doc.Name)
+doc.recompute()
+shapes = [
+    obj.Shape for obj in doc.Objects
+    if obj.isDerivedFrom("Part::Feature") and not obj.Shape.isNull()
+]
+if not shapes or any(not shape.isValid() for shape in shapes):
+    raise RuntimeError("FreeCAD imported an empty or invalid shape")
+count = sum(len(shape.Solids) for shape in shapes)
+volume = sum(shape.Volume for shape in shapes)
+expected_volume = sum(part["volume_mm3"] for part in expected["parts"].values())
+if count != len(expected["parts"]) or not math.isclose(
+    volume, expected_volume, rel_tol=1e-7, abs_tol=1e-5
+):
+    raise RuntimeError("FreeCAD import changed solid count or volume")
+fcstd = root / "inspection.FCStd"
+if fcstd.exists():
+    raise RuntimeError(f"Refusing to overwrite {fcstd}")
+doc.saveAs(str(fcstd))
+report_path.write_text(
+    json.dumps(
+        {
+            "status": "freecad_geometry_passed",
+            "freecad_version": App.Version(),
+            "solid_count": count,
+            "volume_mm3": volume,
+            "native_parametric_feature_tree": False,
+            "independent_geometry_kernel": False,
+            "fea_executed": False,
+        },
+        indent=2,
+    ) + "\n",
+    encoding="utf-8",
+)
+App.Console.PrintMessage(f"FreeCAD geometry checks passed: {report_path}\n")

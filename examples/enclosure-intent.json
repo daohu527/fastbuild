@@ -1,0 +1,36 @@
+{
+  "template": "screw_lid_enclosure",
+  "manufacturing": "fdm_prototype",
+  "fixation": "M3_through_bolts_hex_pockets",
+  "layout_axis": "x",
+  "wall": 3,
+  "base": 6,
+  "lid": 3,
+  "clearance": 4,
+  "gap": 8,
+  "standoff": 8,
+  "headroom": 12,
+  "max_size": [180, 150, 70],
+  "openings": [
+    {
+      "name": "front_vents",
+      "face": "front",
+      "offset": 0,
+      "z": 16,
+      "width": 3,
+      "height": 6,
+      "count": 5,
+      "pitch": 6
+    }
+  ],
+  "interpreted_requirements": [
+    "FDM 原型，器件沿 X 自动排布及自动确定壳体尺寸",
+    "壁厚 3、底厚 6、盖厚 3、柱高 8、包络间隙 8、四周 4、顶部 12 mm",
+    "器件及可拆上盖用 M3 螺栓和六角螺母固定，底部六角孔限制螺栓头旋转",
+    "上盖带定位裙边和四个外置安装耳",
+    "前壁五个 3×6 mm 通风孔，中心高度 16、节距 6 mm",
+    "整体包络包括安装耳和紧固件，不超过 180×150×70 mm",
+    "只预留 connector 内部禁入空间，不生成或验证连接器开口"
+  ],
+  "unresolved_requirements": []
+}

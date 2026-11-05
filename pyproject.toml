@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fastbuild-cad"
+version = "0.1.0"
+description = "Template-based STEP component mounting with CadQuery"
+requires-python = ">=3.11"
+dependencies = [
+    "cadquery==2.8.0",
+    "cq-warehouse @ git+https://github.com/gumyr/cq_warehouse.git@a57bb7a24762d367d66369f280a24c38a64e73dd",
+    "cq-enclosure-builder @ git+https://github.com/raphael-isvelin/cq_enclosure_builder.git@264af08306a96b1a8c0db342f96d479a8b433d70",
+    "jsonschema>=4.23,<5",
+    "PyYAML>=6,<7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "ruff>=0.11,<1"]
+mcp = [
+    "cadquery-mcp @ git+https://github.com/CadQuery/cadquery-contrib.git@60e7f79b410166c44b06373b1a42e135be370ef6#subdirectory=mcp-server",
+]
+
+[project.scripts]
+fastbuild = "fastbuild.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+fastbuild = ["*.schema.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

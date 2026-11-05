@@ -1,0 +1,15 @@
+units: mm
+devices:
+  - name: controller
+    step: ../build/demo/inputs/controller.step
+    mount_hole_diameter: 3.4
+    mounts: [[-14, -10], [14, -10], [-14, 10], [14, 10]]
+    keepouts:
+      - name: connector
+        min: [-8, 15, 0]
+        max: [8, 27, 8]
+  - name: sensor
+    step: ../build/demo/inputs/sensor.step
+    rotation_deg: 90
+    mount_hole_diameter: 3.4
+    mounts: [[-10, -8], [10, -8], [-10, 8], [10, 8]]

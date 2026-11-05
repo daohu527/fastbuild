@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fastbuild mounting plate design (millimeters)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "units", "plate", "mounting", "clearance", "devices"],
+  "properties": {
+    "version": {"type": "integer", "const": 1},
+    "units": {"const": "mm"},
+    "plate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "depth", "thickness", "edge_margin"],
+      "properties": {
+        "width": {"type": "number", "exclusiveMinimum": 0},
+        "depth": {"type": "number", "exclusiveMinimum": 0},
+        "thickness": {"type": "number", "minimum": 1},
+        "edge_margin": {"type": "number", "minimum": 1}
+      }
+    },
+    "mounting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["size", "fit", "post_diameter", "min_wall"],
+      "properties": {
+        "size": {"enum": ["M3-0.5", "M4-0.7", "M5-0.8"]},
+        "fit": {"enum": ["Close", "Normal", "Loose"]},
+        "post_diameter": {"type": "number", "exclusiveMinimum": 0},
+        "min_wall": {"type": "number", "minimum": 1}
+      }
+    },
+    "clearance": {"type": "number", "minimum": 0.1},
+    "devices": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/device"}
+    }
+  },
+  "$defs": {
+    "point2": {
+      "type": "array",
+      "items": {"type": "number"},
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "point3": {
+      "type": "array",
+      "items": {"type": "number"},
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "keepout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "min", "max"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "min": {"$ref": "#/$defs/point3"},
+        "max": {"$ref": "#/$defs/point3"}
+      }
+    },
+    "device": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name", "step", "position", "rotation_deg", "standoff",
+        "mount_hole_diameter", "mounts"
+      ],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
+        "step": {"type": "string", "minLength": 1},
+        "position": {"$ref": "#/$defs/point2"},
+        "rotation_deg": {"type": "number"},
+        "standoff": {"type": "number", "exclusiveMinimum": 0},
+        "mount_hole_diameter": {"type": "number", "exclusiveMinimum": 0},
+        "mounts": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/point2"}
+        },
+        "keepouts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/keepout"}
+        }
+      }
+    }
+  }
+}
